@@ -1,4 +1,3 @@
-import { Transaction as TransactionType } from "@/state/RecoilState";
 import mongoose from "mongoose";
 
 const transactionSchema = new mongoose.Schema({
@@ -15,8 +14,8 @@ const transactionSchema = new mongoose.Schema({
     trim: true,
   },
   category: {
-    type: String,
-    enum: ["Food", "Transport", "Entertainment", "Shopping", "Bills", "Other", "Salary"],
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Category", // References the Category model
     required: true,
   },
   type: {
@@ -32,4 +31,3 @@ const transactionSchema = new mongoose.Schema({
 
 const Transaction = mongoose.models.Transaction || mongoose.model("Transaction", transactionSchema);
 export default Transaction;
-
