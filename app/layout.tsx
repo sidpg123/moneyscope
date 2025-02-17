@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import RecoilContextProvider from "@/lib/recoilContextProvider";
+import Navbar from "@/components/NavBar";
+import { Source_Sans_3 } from "next/font/google";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
+
+const sansFont = Source_Sans_3({
+  weight: "500",
+  subsets: ["latin"],
+  variable: "--font-sans",
 });
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -26,9 +26,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${sansFont.className} tracking-wide antialiased`}
       >
-        {children}
+        <RecoilContextProvider>
+          <Navbar />
+          {children}
+        </RecoilContextProvider>
       </body>
     </html>
   );
