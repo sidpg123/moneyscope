@@ -18,3 +18,12 @@ export const budgetSchema = z.object({
   month: z.number().min(1).max(12, "Month must be between 1 and 12"),
   year: z.number().min(2000).max(2100, "Year must be reasonable"),
 });
+
+export const addTransactionFormSchema = z.object({
+  category: z.string().min(2, "Category must be at least 2 characters"),
+  amount: z.number().min(1, "Amount must be at least 1"),
+  description: z.string().min(3, "Description must be at least 3 characters"),
+  type: z.enum(["income", "expense"], {
+    message: "Type must be either 'income' or 'expense'",
+  }),
+})

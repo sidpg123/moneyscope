@@ -1,5 +1,7 @@
+import { redirect } from "next/navigation"
 
 export default function Home() {
+  redirect('/transactions');
   return (
     <>
       <div>Landing page</div>

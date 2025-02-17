@@ -1,9 +1,9 @@
+import { redirect } from 'next/navigation';
 import React from 'react'
 
-function page() {
+export default function page() {
+    redirect('/transactions');
   return (
     <div>page</div>
   )
 }
-
-export default page

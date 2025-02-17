@@ -19,13 +19,14 @@ interface DatePickerProps {
     onDateChange: (date: Date) => void;
   }
 
-export default function DatePicker({ onDateChange }: DatePickerProps) {
+export default function DatePicker() {
     const [selectedDate, setSelectedDate] = useRecoilState(selectedDateAtom);
 
     function handleSelect(date: Date | undefined) {
         if (date) {
+          console.log("date from datePicker", date)
           setSelectedDate(date);
-          onDateChange(date);
+          // onDateChange(date);
         }
       }
 
@@ -48,6 +49,9 @@ export default function DatePicker({ onDateChange }: DatePickerProps) {
           mode="single"
           selected={selectedDate}
           onSelect={handleSelect}
+          // disabled={(date) =>
+          //   date > new Date() || date < new Date("1900-01-01")
+          // }
           initialFocus
         />
       </PopoverContent>

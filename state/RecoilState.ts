@@ -38,6 +38,11 @@ export const chartTypeState = atom<ChartType>({
     default: "pie",
 });
 
+export const categoriesAtom = atom<string[]>({
+    key: "categoriesAtom",
+    default: [],
+  });
+
 // Filtered Transactions (Based on selected time range)
 export const filteredTransactionsState = selector<Transaction[]>({
     key: "filteredTransactionsState",
