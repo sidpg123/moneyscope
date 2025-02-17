@@ -1,10 +1,8 @@
 "use client"
 
-import * as React from "react"
 import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import {
@@ -12,12 +10,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { cn } from "@/lib/utils"
 import { selectedDateAtom } from "@/state/RecoilState"
 import { useRecoilState } from "recoil"
 
-interface DatePickerProps {
-    onDateChange: (date: Date) => void;
-  }
+// interface DatePickerProps {
+//     onDateChange: (date: Date) => void;
+//   }
 
 export default function DatePicker() {
     const [selectedDate, setSelectedDate] = useRecoilState(selectedDateAtom);
@@ -49,9 +48,9 @@ export default function DatePicker() {
           mode="single"
           selected={selectedDate}
           onSelect={handleSelect}
-          // disabled={(date) =>
-          //   date > new Date() || date < new Date("1900-01-01")
-          // }
+          disabled={(date) =>
+            date > new Date() || date < new Date("1900-01-01")
+          }
           initialFocus
         />
       </PopoverContent>

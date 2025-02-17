@@ -11,7 +11,12 @@ export async function GET(req: Request) {
   const year = searchParams.get("year");
   const month = searchParams.get("month");
 
-  let filter: any = { type: "expense" }; // Only expenses for pie chart
+  interface Filter {
+    date?: { $gte: Date, $lte: Date };
+  }
+  
+  const filter: Filter = {};
+  // const filter: any = { type: "expense" }; // Only expenses for pie chart
 
   if (startDate && endDate) {
     filter.date = { $gte: new Date(startDate), $lte: new Date(endDate) };

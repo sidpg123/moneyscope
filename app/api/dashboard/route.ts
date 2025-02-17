@@ -12,7 +12,11 @@ export async function GET(req: Request) {
   const month = searchParams.get("month");
   const day = searchParams.get("day");
 
-  let filter: any = {};
+  interface Filter {
+    date?: { $gte: Date, $lte: Date };
+  }
+  
+  const filter: Filter = {};
 
   if (startDate && endDate) {
     filter.date = { $gte: new Date(startDate), $lte: new Date(endDate) };

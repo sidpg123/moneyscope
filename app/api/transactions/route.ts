@@ -2,11 +2,9 @@ import dbConnect from "@/lib/dbConnect";
 import { transactionSchema } from "@/lib/zodSchemas";
 import Category from "@/schema/categoriesSchema";
 import Transaction from "@/schema/TransactionSchema";
-import { endOfDay, startOfDay } from "date-fns";
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
-import z from "zod";
 
 // const transactionSchema = z.object({
 //     amount: z.number().min(1, "Amount must be at least 1"),

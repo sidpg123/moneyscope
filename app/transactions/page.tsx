@@ -1,25 +1,24 @@
 "use client";
-import { useEffect, useState, useTransition } from "react";
-import { useRecoilState } from "recoil";
 import {
   selectedDateAtom,
-  transactionsAtom,
-  totalIncomeAtom,
   totalExpensesAtom,
+  totalIncomeAtom,
+  transactionsAtom,
 } from "@/state/RecoilState";
+import { useEffect } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
 // import "react-datepicker/dist/react-datepicker.css";
-import { fetchTransactionsByDate } from "@/actions/FetchTransaction";
 import DatePicker from "@/components/DatePicker";
 import { AddTransaction } from "@/components/Transaction/AddTransaction";
-import { DataTable } from "@/components/Transaction/DataTable";
 import { columns } from "@/components/Transaction/Columns";
+import { DataTable } from "@/components/Transaction/DataTable";
 
 export default function Transactions() {
-  const [selectedDate, setSelectedDate] = useRecoilState(selectedDateAtom);
+  const selectedDate = useRecoilValue(selectedDateAtom) 
+  // const [selectedDate, setSelectedDate] = useRecoilState(selectedDateAtom);
   const [transactions, setTransactions] = useRecoilState(transactionsAtom);
   const [totalIncome, setTotalIncome] = useRecoilState(totalIncomeAtom);
   const [totalExpenses, setTotalExpenses] = useRecoilState(totalExpensesAtom);
-  const [isPending, startTransition] = useTransition(); // For async state updates
 
   useEffect(() => {
     const fetchTransactions = async () => {
