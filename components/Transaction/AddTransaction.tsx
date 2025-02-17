@@ -1,8 +1,6 @@
 "use client";
 import * as React from "react";
 
-import { cn } from "@/lib/utils";
-import { useMediaQuery } from "@/hooks/use-media-query";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -22,26 +20,25 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Label } from "@/components/ui/label";
+import { useMediaQuery } from "@/hooks/use-media-query";
 import CategorySelector from "../ui/addCategory";
 
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
 import { addTransactionFormSchema } from "@/lib/zodSchemas";
+import { selectedDateAtom, totalExpensesAtom, totalIncomeAtom, transactionsAtom } from "@/state/RecoilState";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { z } from "zod";
 import TransactionTypeSelector from "../ui/selectTransactionType";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { selectedDateAtom, transactionsAtom } from "@/state/RecoilState";
 
 export function AddTransaction() {
   const [open, setOpen] = React.useState(false);
@@ -61,7 +58,7 @@ export function AddTransaction() {
               your transaction.
             </DialogDescription>
           </DialogHeader>
-          <ProfileForm setDialog={setOpen}/>
+          <ProfileForm setDialog={setOpen} />
         </DialogContent>
       </Dialog>
     );
@@ -80,7 +77,7 @@ export function AddTransaction() {
             transaction.
           </DrawerDescription>
         </DrawerHeader>
-        <ProfileForm  setDialog={setOpen}/>
+        <ProfileForm setDialog={setOpen} />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
             <Button variant="outline">Cancel</Button>
@@ -95,7 +92,9 @@ type ProfileFormProps = {
   setDialog: (open: boolean) => void; // Callback function to control dialog visibility
 };
 function ProfileForm({ setDialog }: ProfileFormProps) {
-  const [transactions, setTransactions] = useRecoilState(transactionsAtom);
+  const setTotalIncome = useSetRecoilState(totalIncomeAtom)
+  const  setTransactions = useSetRecoilState(transactionsAtom);
+  const setTotalExpenses = useSetRecoilState(totalExpensesAtom);
   const form = useForm<z.infer<typeof addTransactionFormSchema>>({
     resolver: zodResolver(addTransactionFormSchema),
   });
@@ -128,13 +127,13 @@ function ProfileForm({ setDialog }: ProfileFormProps) {
       localDate.setDate(localDate.getDate() + 1); // Adjust for UTC shift
 
       const date = localDate.toISOString().split("T")[0];
-      
-      const res = await fetch(
-        `/api/transactions/by-date/${date}`
-      );
+
+      const res = await fetch(`/api/transactions/by-date/${date}`);
       const data = await res.json();
       setTransactions(data.transactions); // Update the transactions list
-      
+      setTotalIncome(data.totalIncome);
+      setTotalExpenses(data.totalExpenses);
+
       form.reset(); // Reset the form after submission
     } catch (error) {
       console.error("Error adding transaction:", error);

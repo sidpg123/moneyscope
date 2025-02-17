@@ -1,71 +1,28 @@
-import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import {
+  Command,
+  CommandItem,
+  CommandList
+} from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  Command,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import { Check, Plus } from "lucide-react";
-import { addCategory, fetchCategories } from "@/actions/FetchAndAddCategories";
-import { useRecoilState } from "recoil";
-import { categoriesAtom } from "@/state/RecoilState";
+import { Check } from "lucide-react";
+import { useState } from "react";
 
 
 export default function TransactionTypeSelector({ onTypeSelect }: { onTypeSelect: (type: string) => void }) {
-//   const [categories, setCategories] = useRecoilState(categoriesAtom);
-  const [loading, setLoading] = useState(true);
-  const [type, setType] = useState("expense");
-
-//   useEffect(() => {
-//     async function loadCategories() {
-//       try {
-//         const fetchedCategories = await fetchCategories();
-//         setCategories(fetchedCategories);
-//       } catch (error) {
-//         console.error("Error fetching categories:", error);
-//       } finally {
-//         setLoading(false);
-//       }
-//     }
-//     loadCategories();
-//   }, [setCategories]);
-
   const [open, setOpen] = useState(false);
   const [selectedType, setSelectedType] = useState<string | null>(null);
-//   const [newCategory, setNewCategory] = useState("");
-  // const [categoryList, setCategoryList] = useState(categories);
-  // console.log(categories)
-  // console.log(categoryList)
+
 
   const handleSelectType = (type: string) => {
     setSelectedType(type);
     onTypeSelect(type);
     setOpen(false);
   };
-
-
-//   const handleAddCategory = async () => {
-//     if (newCategory.trim() && !categories.includes(newCategory)) {
-//       try {
-//         const addedCategory = await addCategory(newCategory); // Call server action
-//         setCategories((prev) => [...prev, addedCategory.category]); // Update global state
-//         setSelectedType(addedCategory.category);
-//         onCategorySelect(addedCategory.category);
-//       } catch (error) {
-//         console.error("Error adding category:", error);
-//       } finally {
-//         setNewCategory("");
-//         setOpen(false);
-//       }
-//     }
-//   };
 
   const typesOfExpense = ["income", "expense"]
 

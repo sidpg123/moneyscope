@@ -20,7 +20,7 @@ import { categoriesAtom } from "@/state/RecoilState";
 
 export default function CategorySelector({ onCategorySelect }: { onCategorySelect: (category: string) => void }) {
   const [categories, setCategories] = useRecoilState(categoriesAtom);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadCategories() {
@@ -29,9 +29,10 @@ export default function CategorySelector({ onCategorySelect }: { onCategorySelec
         setCategories(fetchedCategories);
       } catch (error) {
         console.error("Error fetching categories:", error);
-      } finally {
-        setLoading(false);
-      }
+      } 
+      // finally {
+      //   setLoading(false);
+      // }
     }
     loadCategories();
   }, [setCategories]);
