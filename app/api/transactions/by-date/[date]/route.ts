@@ -2,11 +2,17 @@ import { startOfDay, endOfDay } from "date-fns";
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import Transaction from "@/schema/TransactionSchema";
+import Category from "@/schema/categoriesSchema";
 
 export async function GET(req: Request, { params }: { params: { date: string } }) {
-    await dbConnect();
- 
+    
     try {
+        await dbConnect();
+
+        if (!Category) {
+            console.warn("Category model is not loaded");
+        }
+
         // Convert string date to Date object
         const selectedDate = new Date(params.date);
 

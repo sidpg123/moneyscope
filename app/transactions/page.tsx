@@ -5,7 +5,7 @@ import {
   totalIncomeAtom,
   transactionsAtom,
 } from "@/state/RecoilState";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 // import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "@/components/DatePicker";
@@ -19,9 +19,11 @@ export default function Transactions() {
   const [transactions, setTransactions] = useRecoilState(transactionsAtom);
   const [totalIncome, setTotalIncome] = useRecoilState(totalIncomeAtom);
   const [totalExpenses, setTotalExpenses] = useRecoilState(totalExpensesAtom);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchTransactions = async () => {
+      setLoading(true)
       const localDate = new Date(selectedDate);
       localDate.setHours(localDate.getHours() + 5, localDate.getMinutes() + 30); // ✅ Correct
 
@@ -41,6 +43,7 @@ export default function Transactions() {
       } catch (error) {
         console.error("Error fetching transactions:", error);
       }
+      setLoading(false)
     };
 
     fetchTransactions();
@@ -76,7 +79,7 @@ export default function Transactions() {
 
       {/* Transactions Table */}
       <div className="mt-6">
-        <DataTable columns={columns} data={transactions} />
+        <DataTable loading={loading} columns={columns} data={transactions} />
       </div>
     </div>
   );

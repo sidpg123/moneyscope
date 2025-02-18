@@ -19,14 +19,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react"; // ✅ Import Loader Icon
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  loading?: boolean; // ✅ Added loading prop
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  loading = false, // ✅ Default value false
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
@@ -65,7 +69,14 @@ export function DataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {loading ? ( // ✅ Show loading row when loading
+              <TableRow>
+                <TableCell colSpan={columns.length} className="h-24 text-center">
+                  <Loader2 className="w-6 h-6 animate-spin mx-auto text-gray-500" />
+                  <span>Loading...</span>
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -99,7 +110,7 @@ export function DataTable<TData, TValue>({
           variant="outline"
           size="sm"
           onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
+          disabled={!table.getCanPreviousPage() || loading} // ✅ Disable when loading
         >
           Previous
         </Button>
@@ -107,7 +118,7 @@ export function DataTable<TData, TValue>({
           variant="outline"
           size="sm"
           onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
+          disabled={!table.getCanNextPage() || loading} // ✅ Disable when loading
         >
           Next
         </Button>
