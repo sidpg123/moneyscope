@@ -2,7 +2,7 @@ import { atom, selector } from "recoil";
 
 // Define Transaction Type
 export interface Transaction {
-    id: string;
+    _id: string;
     amount: number;
     category: string;
     description: string;

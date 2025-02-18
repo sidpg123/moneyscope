@@ -3,6 +3,7 @@ import {
   selectedDateAtom,
   totalExpensesAtom,
   totalIncomeAtom,
+  Transaction,
   transactionsAtom,
 } from "@/state/RecoilState";
 import { useEffect, useState } from "react";
@@ -10,8 +11,19 @@ import { useRecoilState, useRecoilValue } from "recoil";
 // import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "@/components/DatePicker";
 import { AddTransaction } from "@/components/Transaction/AddTransaction";
-import { columns } from "@/components/Transaction/Columns";
+import { columns as defaultColumns } from "@/components/Transaction/Columns";
 import { DataTable } from "@/components/Transaction/DataTable";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { MoreHorizontal } from "lucide-react";
+import { Row } from "@tanstack/react-table";
 
 export default function Transactions() {
   const selectedDate = useRecoilValue(selectedDateAtom);
@@ -20,6 +32,8 @@ export default function Transactions() {
   const [totalIncome, setTotalIncome] = useRecoilState(totalIncomeAtom);
   const [totalExpenses, setTotalExpenses] = useRecoilState(totalExpensesAtom);
   const [loading, setLoading] = useState(true);
+
+
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -49,6 +63,126 @@ export default function Transactions() {
     fetchTransactions();
   }, [selectedDate]);
 
+  const handleEditTransaction = async (transaction: Transaction) => {
+    console.log("received transaction in handleEditTransaction function", transaction)
+
+    const transactionData = {
+      type: transaction.type,
+      category: transaction.category,
+      amount: transaction.amount,
+      description: transaction.description,
+    };
+
+    try {
+      const response = await fetch(`/api/transactions/${transaction._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(transactionData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to add transaction");
+      }
+
+
+      const localDate = new Date(selectedDate);
+      localDate.setHours(localDate.getHours() + 5, localDate.getMinutes() + 30); // ✅ Correct
+
+      const date = localDate.toISOString().split("T")[0];
+
+      const res = await fetch(`/api/transactions/by-date/${date}`);
+      if (!res.ok) throw new Error("Failed to fetch transactions");
+      const data = await res.json();
+      setTransactions(data.transactions); // Update the transactions list
+      setTotalIncome(data.totalIncome);
+      setTotalExpenses(data.totalExpenses);
+
+    } catch (error) {
+      console.error("Error adding transaction:", error);
+    }
+
+  }
+
+  const columns = defaultColumns.map((col) =>
+    col.id === "actions"
+      ? {
+        ...col,
+        cell: ({ row }: { row: Row<Transaction> }) => {
+          const transaction = row.original;
+          return (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-4 p-0">
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal className="h-4 w-2" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <AddTransaction onSubmit={handleEditTransaction} initialData={transaction} text={"Edit Transaction"} />
+                <DropdownMenuItem
+                  onClick={() => console.log(transaction)}
+                >Log</DropdownMenuItem>
+
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Delete</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          );
+        },
+      }
+      : col
+  );
+
+
+
+  const handleAddTransaction = async (transaction: Transaction) => {
+
+    console.log("transaction", transaction)
+    const transactionData = {
+      type: transaction.type,
+      category: transaction.category,
+      amount: transaction.amount,
+      description: transaction.description,
+      date: transaction.date
+    };
+    console.log("transaction Data", transactionData)
+    try {
+      const response = await fetch("/api/transactions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(transactionData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to add transaction");
+      }
+
+      // Handle success (e.g., reset form, show message, refetch transactions)
+      console.log("Transaction added successfully");
+
+      const localDate = new Date(selectedDate);
+      localDate.setHours(localDate.getHours() + 5, localDate.getMinutes() + 30); // ✅ Correct
+
+      const date = localDate.toISOString().split("T")[0];
+
+      const res = await fetch(`/api/transactions/by-date/${date}`);
+      if (!res.ok) throw new Error("Failed to fetch transactions");
+      const data = await res.json();
+      setTransactions(data.transactions); // Update the transactions list
+      setTotalIncome(data.totalIncome);
+      setTotalExpenses(data.totalExpenses);
+
+      // Reset the form after submission
+    } catch (error) {
+      console.error("Error adding transaction:", error);
+    }
+  }
+
   return (
     <div className="flex flex-col p-6 w-[95vw] md:w-[80vw] mx-auto bg-white shadow-lg rounded-xl">
       {/* Title */}
@@ -63,7 +197,7 @@ export default function Transactions() {
           <DatePicker />
 
           {/* Add Transaction Button */}
-          <AddTransaction />
+          <AddTransaction onSubmit={handleAddTransaction} initialData={undefined} text={"Add Transaction"} />
         </div>
 
         {/* Income & Expense Summary */}

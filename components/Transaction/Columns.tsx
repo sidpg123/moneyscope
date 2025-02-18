@@ -26,16 +26,16 @@ export const columns: ColumnDef<Transaction>[] = [
   {
     accessorKey: "category",
     header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Category
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        )
-      },
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Category
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
   },
   {
     accessorKey: "description",
@@ -44,16 +44,16 @@ export const columns: ColumnDef<Transaction>[] = [
   {
     accessorKey: "amount",
     header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Amount
-            <ArrowUpDown className="" />
-          </Button>
-        )
-      },
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Amount
+          <ArrowUpDown className="" />
+        </Button>
+      )
+    },
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("amount"));
       const formatted = new Intl.NumberFormat("en-US", {
@@ -67,8 +67,8 @@ export const columns: ColumnDef<Transaction>[] = [
 
   {
     id: "actions",
-    cell: () => {
-      // const payment = row.original;
+    cell: ({ row }) => {
+      const payment = row.original;
 
       return (
         <DropdownMenu>
@@ -80,7 +80,8 @@ export const columns: ColumnDef<Transaction>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem>Edit</DropdownMenuItem>
+            {/* <AddTransaction onSubmit={handleAddTransaction} initialData={payment} /> */}
+
             <DropdownMenuSeparator />
             <DropdownMenuItem>Delete</DropdownMenuItem>
           </DropdownMenuContent>
@@ -89,3 +90,5 @@ export const columns: ColumnDef<Transaction>[] = [
     },
   },
 ];
+
+
