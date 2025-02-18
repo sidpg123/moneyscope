@@ -33,14 +33,19 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { addTransactionFormSchema } from "@/lib/zodSchemas";
-import { selectedDateAtom, totalExpensesAtom, totalIncomeAtom, transactionsAtom } from "@/state/RecoilState";
+import { selectedDateAtom, totalExpensesAtom, totalIncomeAtom, Transaction, transactionsAtom } from "@/state/RecoilState";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { z } from "zod";
 import TransactionTypeSelector from "../ui/selectTransactionType";
 
-export function AddTransaction() {
+interface addTransaction {
+  onSubmit: (transaction: Transaction) => void;
+  initialData?: Transaction,
+  text: string,
+}
+export function AddTransaction({ onSubmit, initialData, text }: addTransaction) {
   const [open, setOpen] = React.useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
@@ -48,17 +53,17 @@ export function AddTransaction() {
     return (
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button variant="outline">Add Transaction</Button>
+          <Button variant="outline">{text}</Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Add Transaction</DialogTitle>
+            <DialogTitle>{text}</DialogTitle>
             <DialogDescription>
               Managing your finances is easy! Just enter the details and save
               your transaction.
             </DialogDescription>
           </DialogHeader>
-          <ProfileForm setDialog={setOpen} />
+          <ProfileForm setDialog={setOpen} onSubmit={onSubmit} initialData={initialData} />
         </DialogContent>
       </Dialog>
     );
@@ -77,7 +82,7 @@ export function AddTransaction() {
             transaction.
           </DrawerDescription>
         </DrawerHeader>
-        <ProfileForm setDialog={setOpen} />
+        <ProfileForm setDialog={setOpen} onSubmit={onSubmit} initialData={initialData} />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
             <Button variant="outline">Cancel</Button>
@@ -90,61 +95,44 @@ export function AddTransaction() {
 type ProfileFormProps = {
   // className?: React.ComponentProps<"form">;
   setDialog: (open: boolean) => void; // Callback function to control dialog visibility
+  onSubmit: (transaction: Transaction) => void;
+  initialData?: Transaction,
 };
-function ProfileForm({ setDialog }: ProfileFormProps) {
+function ProfileForm({ setDialog, onSubmit, initialData }: ProfileFormProps) {
+
+  console.log("initialData in AddTransaction Component", initialData)
+
   const setTotalIncome = useSetRecoilState(totalIncomeAtom)
-  const  setTransactions = useSetRecoilState(transactionsAtom);
+  const setTransactions = useSetRecoilState(transactionsAtom);
   const setTotalExpenses = useSetRecoilState(totalExpensesAtom);
+
   const form = useForm<z.infer<typeof addTransactionFormSchema>>({
     resolver: zodResolver(addTransactionFormSchema),
+    defaultValues: {
+      category: initialData?.category || "",
+      description: initialData?.description || "",
+      amount: initialData?.amount,
+      type: initialData?.type as "income" | "expense" | undefined
+    }
   });
 
   const selectedDate = useRecoilValue(selectedDateAtom); // Get date from Recoil
   // console.log(selectedDate)
-  async function onSubmit(values: z.infer<typeof addTransactionFormSchema>) {
-    const transactionData = {
-      ...values,
-      date: selectedDate.toISOString(), // Ensure it's in a valid format
-    };
+  async function handleSubmit(values: z.infer<typeof addTransactionFormSchema>) {
 
-    try {
-      const response = await fetch("/api/transactions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(transactionData),
-      });
+    onSubmit({
+      _id: initialData?._id || "", ...values,
+      date: selectedDate.toISOString()
+    });
+    
+    setDialog(false);
+    form.reset();
 
-      if (!response.ok) {
-        throw new Error("Failed to add transaction");
-      }
-
-      setDialog(false);
-      // Handle success (e.g., reset form, show message, refetch transactions)
-      console.log("Transaction added successfully");
-
-      const localDate = new Date(selectedDate);
-      localDate.setHours(localDate.getHours() + 5, localDate.getMinutes() + 30); // ✅ Correct
-
-      const date = localDate.toISOString().split("T")[0];
-
-      const res = await fetch(`/api/transactions/by-date/${date}`);
-      if (!res.ok) throw new Error("Failed to fetch transactions");
-      const data = await res.json();
-      setTransactions(data.transactions); // Update the transactions list
-      setTotalIncome(data.totalIncome);
-      setTotalExpenses(data.totalExpenses);
-
-      form.reset(); // Reset the form after submission
-    } catch (error) {
-      console.error("Error adding transaction:", error);
-    }
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-5">
         <div className="flex flex-row gap-2 justify-evenly px-3 md:px-0 ">
           {/* Category Selector */}
           <FormField
