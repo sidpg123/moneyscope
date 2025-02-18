@@ -33,10 +33,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { addTransactionFormSchema } from "@/lib/zodSchemas";
-import { selectedDateAtom, totalExpensesAtom, totalIncomeAtom, Transaction, transactionsAtom } from "@/state/RecoilState";
+import { selectedDateAtom, Transaction } from "@/state/RecoilState";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import { z } from "zod";
 import TransactionTypeSelector from "../ui/selectTransactionType";
 
@@ -101,10 +101,6 @@ type ProfileFormProps = {
 function ProfileForm({ setDialog, onSubmit, initialData }: ProfileFormProps) {
 
   console.log("initialData in AddTransaction Component", initialData)
-
-  const setTotalIncome = useSetRecoilState(totalIncomeAtom)
-  const setTransactions = useSetRecoilState(transactionsAtom);
-  const setTotalExpenses = useSetRecoilState(totalExpensesAtom);
 
   const form = useForm<z.infer<typeof addTransactionFormSchema>>({
     resolver: zodResolver(addTransactionFormSchema),
