@@ -124,12 +124,13 @@ function ProfileForm({ setDialog }: ProfileFormProps) {
       // Handle success (e.g., reset form, show message, refetch transactions)
       console.log("Transaction added successfully");
 
-      // const localDate = new Date(selectedDate);
-      // localDate.setDate(localDate.getDate() + 1); // Adjust for UTC shift
+      const localDate = new Date(selectedDate);
+      localDate.setHours(localDate.getHours() + 5, localDate.getMinutes() + 30); // ✅ Correct
 
-      const date = selectedDate.toISOString().split("T")[0];
+      const date = localDate.toISOString().split("T")[0];
 
       const res = await fetch(`/api/transactions/by-date/${date}`);
+      if (!res.ok) throw new Error("Failed to fetch transactions");
       const data = await res.json();
       setTransactions(data.transactions); // Update the transactions list
       setTotalIncome(data.totalIncome);
