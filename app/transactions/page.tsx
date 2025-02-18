@@ -14,7 +14,7 @@ import { columns } from "@/components/Transaction/Columns";
 import { DataTable } from "@/components/Transaction/DataTable";
 
 export default function Transactions() {
-  const selectedDate = useRecoilValue(selectedDateAtom) 
+  const selectedDate = useRecoilValue(selectedDateAtom);
   // const [selectedDate, setSelectedDate] = useRecoilState(selectedDateAtom);
   const [transactions, setTransactions] = useRecoilState(transactionsAtom);
   const [totalIncome, setTotalIncome] = useRecoilState(totalIncomeAtom);
@@ -23,10 +23,12 @@ export default function Transactions() {
   useEffect(() => {
     const fetchTransactions = async () => {
       const localDate = new Date(selectedDate);
-      localDate.setDate(localDate.getDate() + 1); // Adjust for UTC shift
+      localDate.setHours(localDate.getHours() + 5, localDate.getMinutes() + 30); // ✅ Correct
 
+      console.log("selectedDate", selectedDate);
+      console.log("localDate", localDate);
       const date = localDate.toISOString().split("T")[0];
-      // console.log("Formatted Date for API:", date); // This should be in YYYY-MM-DD
+      console.log("Formatted Date for API:", date); // This should be in YYYY-MM-DD
       // console.log("Selected Date:", selectedDate); // This logs the original Date object
 
       try {
@@ -47,7 +49,9 @@ export default function Transactions() {
   return (
     <div className="flex flex-col p-6 w-[95vw] md:w-[80vw] mx-auto bg-white shadow-lg rounded-xl">
       {/* Title */}
-      <h1 className="text-2xl font-bold mb-6 text-gray-800 tracking-wider">Wellcome Siddharth!</h1>
+      <h1 className="text-2xl font-bold mb-6 text-gray-800 tracking-wider">
+        Wellcome Siddharth!
+      </h1>
 
       {/* Top Bar: Date Picker, Add Transaction, and Summary in One Row */}
       <div className="flex flex-col sm:flex-row  items-center justify-between  gap-4 p-4 rounded-lg shadow-md">

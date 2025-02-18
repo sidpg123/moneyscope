@@ -100,6 +100,7 @@ function ProfileForm({ setDialog }: ProfileFormProps) {
   });
 
   const selectedDate = useRecoilValue(selectedDateAtom); // Get date from Recoil
+  // console.log(selectedDate)
   async function onSubmit(values: z.infer<typeof addTransactionFormSchema>) {
     const transactionData = {
       ...values,
@@ -123,10 +124,10 @@ function ProfileForm({ setDialog }: ProfileFormProps) {
       // Handle success (e.g., reset form, show message, refetch transactions)
       console.log("Transaction added successfully");
 
-      const localDate = new Date(selectedDate);
-      localDate.setDate(localDate.getDate() + 1); // Adjust for UTC shift
+      // const localDate = new Date(selectedDate);
+      // localDate.setDate(localDate.getDate() + 1); // Adjust for UTC shift
 
-      const date = localDate.toISOString().split("T")[0];
+      const date = selectedDate.toISOString().split("T")[0];
 
       const res = await fetch(`/api/transactions/by-date/${date}`);
       const data = await res.json();
