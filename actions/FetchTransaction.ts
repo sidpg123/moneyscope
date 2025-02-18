@@ -18,7 +18,7 @@ export async function fetchTransactionsByDate(selectedDate: Date): Promise<{
       .lean();
 
     const formattedTransactions: TransactionType[] = transactions.map((txn) => ({
-      id: String(txn._id), // Ensure _id is string
+      _id: String(txn._id), // Ensure _id is string
       amount: txn.amount,
       description: txn.description || "", // Avoid undefined errors
       date: txn.date,
