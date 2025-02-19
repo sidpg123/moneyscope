@@ -29,7 +29,7 @@ export async function GET(req: Request, { params }: { params: { date: string } }
             console.log("start Of Day", endOfDay(selectedDateIST))
         } else {
 
-            selectedDateIST.setHours(0, 0, 0, 0);
+            await selectedDateIST.setHours(0, 0, 0, 0);
     
             // Convert IST to UTC by subtracting 5 hours 30 minutes
             const selectedDateUTC = new Date(selectedDateIST.getTime() - (5.5 * 60 * 60 * 1000));

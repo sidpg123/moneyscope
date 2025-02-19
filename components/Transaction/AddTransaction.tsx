@@ -117,9 +117,11 @@ function ProfileForm({ setDialog, onSubmit, initialData }: ProfileFormProps) {
   // console.log(selectedDate)
   async function handleSubmit(values: z.infer<typeof addTransactionFormSchema>) {
 
+    const date = await selectedDate.toISOString();
+
     onSubmit({
       _id: initialData?._id || "", ...values,
-      date: selectedDate.toISOString()
+      date: date
     });
     
     setDialog(false);
