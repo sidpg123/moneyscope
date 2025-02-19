@@ -114,11 +114,13 @@ function ProfileForm({ setDialog, onSubmit, initialData }: ProfileFormProps) {
   });
 
   const selectedDate = useRecoilValue(selectedDateAtom); // Get date from Recoil
-  // console.log(selectedDate)
+  console.log("selected date in addTransaction",selectedDate)
+  console.log("selected date in ISO in addTransaction",selectedDate.toISOString())
+
   async function handleSubmit(values: z.infer<typeof addTransactionFormSchema>) {
 
     const date = await selectedDate.toISOString();
-
+    console.log("date send trom addTransaction", date);
     onSubmit({
       _id: initialData?._id || "", ...values,
       date: date
@@ -126,7 +128,6 @@ function ProfileForm({ setDialog, onSubmit, initialData }: ProfileFormProps) {
     
     setDialog(false);
     form.reset();
-
   }
 
   return (
