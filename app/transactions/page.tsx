@@ -9,6 +9,7 @@ import {
 import { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 // import "react-datepicker/dist/react-datepicker.css";
+import AlertDialogComponent from "@/components/AlertDialog";
 import DatePicker from "@/components/DatePicker";
 import { AddTransaction } from "@/components/Transaction/AddTransaction";
 import { columns as defaultColumns } from "@/components/Transaction/Columns";
@@ -17,14 +18,11 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal } from "lucide-react";
 import { Row } from "@tanstack/react-table";
-import AlertDialogComponent from "@/components/AlertDialog";
+import { MoreHorizontal } from "lucide-react";
 
 export default function Transactions() {
   const selectedDate = useRecoilValue(selectedDateAtom);
@@ -109,7 +107,7 @@ export default function Transactions() {
   const handleDeleteTransaction = async (id: string) => {
     console.log(id);
     try {
-      const response = await fetch(`/api/transactions/${id}`, {
+      await fetch(`/api/transactions/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

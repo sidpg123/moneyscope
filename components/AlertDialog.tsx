@@ -1,18 +1,16 @@
 import {
     AlertDialog,
-    AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-    AlertDialogTrigger,
+    AlertDialogTrigger
 } from "@/components/ui/alert-dialog"
 
 import { Button } from "@/components/ui/button"
 
-import React from 'react'
 interface alertDialog {
     text: string,
     subText: string,
