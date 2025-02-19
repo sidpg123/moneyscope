@@ -14,18 +14,23 @@ export async function GET(req: Request, { params }: { params: { date: string } }
         }
 
         // Convert string date to Date object
-        const selectedDate = new Date(params.date);
+        const selectedDateIST = new Date(params.date); // Assume it's in IST
 
-        const selectedDateUTC = new Date(Date.UTC(
-            selectedDate.getFullYear(),
-            selectedDate.getMonth(),
-            selectedDate.getDate()
-        ));
+        console.log("Original selectedDate (IST assumed):", selectedDateIST.toISOString());
+
+        // Convert selected IST date to start of the day in IST (00:00:00 IST)
+        selectedDateIST.setHours(0, 0, 0, 0);
+
+        // Convert IST to UTC by subtracting 5 hours 30 minutes
+        const selectedDateUTC = new Date(selectedDateIST.getTime() - (5.5 * 60 * 60 * 1000));
 
         const startOfDayUTC = startOfDay(selectedDateUTC);
         const endOfDayUTC = endOfDay(selectedDateUTC);
+
+        console.log("startOfDayUTC", startOfDayUTC)
+        console.log("endOfDayUTC", endOfDayUTC)
         // Check if the date is valid
-        if (isNaN(selectedDate.getTime())) {
+        if (isNaN(selectedDateIST.getTime())) {
             return NextResponse.json({ error: "Invalid date format" }, { status: 400 });
         }
 
