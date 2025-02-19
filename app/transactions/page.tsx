@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Row } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
+import { toast } from "sonner"
+
 
 export default function Transactions() {
   const selectedDate = useRecoilValue(selectedDateAtom);
@@ -82,10 +84,11 @@ export default function Transactions() {
       });
 
       if (!response.ok) {
+        toast.error('Something went wrong')
         throw new Error("Failed to add transaction");
       }
 
-
+      toast.success("Transaction edited Successfully!")
       const localDate = new Date(selectedDate);
       localDate.setHours(localDate.getHours() + 5, localDate.getMinutes() + 30); // ✅ Correct
 
@@ -126,8 +129,13 @@ export default function Transactions() {
       setTotalIncome(data.totalIncome);
       setTotalExpenses(data.totalExpenses);
 
+      toast.success("Transaction deleted successfully!")
+
     } catch (error) {
       console.log(error)
+      toast.error("Something went wrong!", {
+        description: "Please retry"
+      })
     }
   }
 
@@ -149,10 +157,6 @@ export default function Transactions() {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <AddTransaction onSubmit={handleEditTransaction} initialData={transaction} text={"Edit Transaction"} />
-
-                {/* <DropdownMenuItem
-                  onClick={() => console.log(transaction)}
-                >Log</DropdownMenuItem> */}
 
                 <AlertDialogComponent text={"Delete"}
                   alertText="Delete this transaction ?"
@@ -195,23 +199,26 @@ export default function Transactions() {
       }
 
       // Handle success (e.g., reset form, show message, refetch transactions)
-      console.log("Transaction added successfully");
-
+      
       const localDate = new Date(selectedDate);
       localDate.setHours(localDate.getHours() + 5, localDate.getMinutes() + 30); // ✅ Correct
-
+      
       const date = localDate.toISOString().split("T")[0];
-
+      
       const res = await fetch(`/api/transactions/by-date/${date}`);
       if (!res.ok) throw new Error("Failed to fetch transactions");
       const data = await res.json();
       setTransactions(data.transactions); // Update the transactions list
       setTotalIncome(data.totalIncome);
       setTotalExpenses(data.totalExpenses);
-
+      
+      toast.success("Transaction added successfully");
       // Reset the form after submission
     } catch (error) {
       console.error("Error adding transaction:", error);
+      toast.error("Something went wrong!", {
+        description: "Please retry"
+      })
     }
   }
 
