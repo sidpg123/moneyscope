@@ -48,7 +48,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="flex justify-center items-center flex-col w-full">
-      <div className="rounded-md border w-full sm:w-[80vw] md:w-[70vw] lg:w-[60vw] xl:w-[90vw] 2xl:w-[75vw] mx-auto">
+      <div className="rounded-md border w-full sm:w-[80vw] md:w-[70vw] lg:w-[60vw] xl:w-[70vw] 2xl:w-[72vw] mx-auto">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
