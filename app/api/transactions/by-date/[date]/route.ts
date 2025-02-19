@@ -15,25 +15,22 @@ export async function GET(req: Request, { params }: { params: { date: string } }
 
         // Convert string date to Date object
         const selectedDate = new Date(params.date);
-        const IST_OFFSET = 5.5 * 60 * 60 * 1000; // 5 hours 30 minutes in milliseconds
-        const selectedDateIST = new Date(selectedDate.getTime() + IST_OFFSET);
 
-        // Get start and end of day in IST
-        const startOfDayIST = new Date(selectedDateIST);
-        startOfDayIST.setUTCHours(0, 0, 0, 0); // 00:00 IST (which is UTC-5:30)
+        const selectedDateUTC = new Date(Date.UTC(
+            selectedDate.getFullYear(),
+            selectedDate.getMonth(),
+            selectedDate.getDate()
+        ));
 
-        const endOfDayIST = new Date(startOfDayIST);
-        endOfDayIST.setUTCHours(23, 59, 59, 999); // 23:59:59 IST (which is UTC-5:30)
-
-        console.log("Start Of Day (IST Adjusted):", startOfDayIST);
-        console.log("End Of Day (IST Adjusted):", endOfDayIST);
+        const startOfDayUTC = startOfDay(selectedDateUTC);
+        const endOfDayUTC = endOfDay(selectedDateUTC);
         // Check if the date is valid
         if (isNaN(selectedDate.getTime())) {
             return NextResponse.json({ error: "Invalid date format" }, { status: 400 });
         }
 
         const transactions = await Transaction.find({
-            date: { $gte: startOfDay(selectedDate), $lte: endOfDay(selectedDate) }
+            date: { $gte: startOfDayUTC, $lte: endOfDayUTC }
         })
             .populate("category", "name")
             .lean();
