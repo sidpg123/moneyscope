@@ -72,11 +72,11 @@ export function AddTransaction({ onSubmit, initialData, text }: addTransaction) 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <Button variant="outline">Add Transaction</Button>
+        <Button variant="outline">{text}</Button>
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="text-left">
-          <DrawerTitle>Add Transaction</DrawerTitle>
+          <DrawerTitle>{text}</DrawerTitle>
           <DrawerDescription>
             Managing your finances is easy! Just enter the details and save your
             transaction.
@@ -98,6 +98,7 @@ type ProfileFormProps = {
   onSubmit: (transaction: Transaction) => void;
   initialData?: Transaction,
 };
+
 function ProfileForm({ setDialog, onSubmit, initialData }: ProfileFormProps) {
 
   console.log("initialData in AddTransaction Component", initialData)

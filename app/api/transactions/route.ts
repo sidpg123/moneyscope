@@ -6,12 +6,6 @@ import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 
-// const transactionSchema = z.object({
-//     amount: z.number().min(1, "Amount must be at least 1"),
-//     description: z.string().min(3, "Description must be at least 3 characters"),
-//     category: z.string().min(1, "Category is required"), // Accept category name as string
-//     type: z.enum(["income", "expense"]),
-//   });
 
 export async function POST(req: Request) {
     await dbConnect();

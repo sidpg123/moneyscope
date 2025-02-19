@@ -15,6 +15,15 @@ export async function GET(req: Request, { params }: { params: { date: string } }
 
         // Convert string date to Date object
         const selectedDate = new Date(params.date);
+        const startDate = new Date(selectedDate);
+        startDate.setUTCHours(0, 0, 0, 0); // ✅ Ensures 00:00:00 UTC
+
+        const endDate = new Date(selectedDate);
+        endDate.setUTCHours(23, 59, 59, 999); // ✅ Ensures 23:59:59 UTC
+
+        console.log("selectedDate", selectedDate);
+        console.log("start Of Day", startDate);
+        console.log("end Of Day", endDate);
 
         // Check if the date is valid
         if (isNaN(selectedDate.getTime())) {
