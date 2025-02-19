@@ -5,7 +5,7 @@ import Transaction from "@/schema/TransactionSchema";
 import Category from "@/schema/categoriesSchema";
 
 export async function GET(req: Request, { params }: { params: { date: string } }) {
-    
+
     try {
         await dbConnect();
 
@@ -15,20 +15,33 @@ export async function GET(req: Request, { params }: { params: { date: string } }
 
         // Convert string date to Date object
         const selectedDateIST = new Date(params.date); // Assume it's in IST
+        let startOfDayUTC;
+        let endOfDayUTC;
 
         console.log("Original selectedDate (IST assumed):", selectedDateIST.toISOString());
 
-        // Convert selected IST date to start of the day in IST (00:00:00 IST)
-        selectedDateIST.setHours(0, 0, 0, 0);
+        if (process.env.ENVIRONMENT === 'DEV') {
+            startOfDayUTC = startOfDay(selectedDateIST);
+            endOfDayUTC = endOfDay(selectedDateIST);
 
-        // Convert IST to UTC by subtracting 5 hours 30 minutes
-        const selectedDateUTC = new Date(selectedDateIST.getTime() - (5.5 * 60 * 60 * 1000));
+            console.log("selectedDate", selectedDateIST)
+            console.log("start Of Day", startOfDay(selectedDateIST))
+            console.log("start Of Day", endOfDay(selectedDateIST))
+        } else {
 
-        const startOfDayUTC = startOfDay(selectedDateUTC);
-        const endOfDayUTC = endOfDay(selectedDateUTC);
+            selectedDateIST.setHours(0, 0, 0, 0);
+    
+            // Convert IST to UTC by subtracting 5 hours 30 minutes
+            const selectedDateUTC = new Date(selectedDateIST.getTime() - (5.5 * 60 * 60 * 1000));
+    
+             startOfDayUTC = startOfDay(selectedDateUTC);
+             endOfDayUTC = endOfDay(selectedDateUTC);
+    
+            console.log("startOfDayUTC", startOfDayUTC)
+            console.log("endOfDayUTC", endOfDayUTC)
+        }
 
-        console.log("startOfDayUTC", startOfDayUTC)
-        console.log("endOfDayUTC", endOfDayUTC)
+       
         // Check if the date is valid
         if (isNaN(selectedDateIST.getTime())) {
             return NextResponse.json({ error: "Invalid date format" }, { status: 400 });
