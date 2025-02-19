@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
 import { Row } from "@tanstack/react-table";
+import AlertDialogComponent from "@/components/AlertDialog";
 
 export default function Transactions() {
   const selectedDate = useRecoilValue(selectedDateAtom);
@@ -105,6 +106,34 @@ export default function Transactions() {
 
   }
 
+  const handleDeleteTransaction = async (id: string) => {
+    console.log(id);
+    try {
+      const response = await fetch(`/api/transactions/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const localDate = new Date(selectedDate);
+      localDate.setHours(localDate.getHours() + 5, localDate.getMinutes() + 30); // ✅ Correct
+
+      const date = localDate.toISOString().split("T")[0];
+
+      const res = await fetch(`/api/transactions/by-date/${date}`);
+      if (!res.ok) throw new Error("Failed to fetch transactions");
+      const data = await res.json();
+      setTransactions(data.transactions); // Update the transactions list
+      setTotalIncome(data.totalIncome);
+      setTotalExpenses(data.totalExpenses);
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
   const columns = defaultColumns.map((col) =>
     col.id === "actions"
       ? {
@@ -122,12 +151,17 @@ export default function Transactions() {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <AddTransaction onSubmit={handleEditTransaction} initialData={transaction} text={"Edit Transaction"} />
-                <DropdownMenuItem
-                  onClick={() => console.log(transaction)}
-                >Log</DropdownMenuItem>
 
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Delete</DropdownMenuItem>
+                {/* <DropdownMenuItem
+                  onClick={() => console.log(transaction)}
+                >Log</DropdownMenuItem> */}
+
+                <AlertDialogComponent text={"Delete"}
+                  alertText="Delete this transaction ?"
+                  subText={"If ther is mistake in transaction, you can rather edit transaction"}
+                  _id={transaction._id}
+                  onSubmit={handleDeleteTransaction} />
+
               </DropdownMenuContent>
             </DropdownMenu>
           );

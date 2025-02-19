@@ -38,8 +38,14 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   }
 
   export async function DELETE(req: Request, { params }: { params: { id: string } }) {
-    await dbConnect();
-    await Transaction.findByIdAndDelete(params.id);
-    return NextResponse.json({ message: "Transaction deleted" });
+    try {
+      await dbConnect();
+      await Transaction.findByIdAndDelete(params.id);
+
+      return NextResponse.json({ message: "Transaction deleted" });
+      
+    } catch (error) {
+      console.log(error)
+    }
   }
   
