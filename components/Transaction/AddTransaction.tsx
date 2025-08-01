@@ -142,6 +142,7 @@ function ProfileForm({ setDialog, onSubmit, initialData }: ProfileFormProps) {
               <FormItem className="w-full">
                 <FormControl>
                   <CategorySelector
+                  initialCategory={initialData?.category}
                     onCategorySelect={(category) => field.onChange(category)} // Ensure it updates the form state
                   />
                 </FormControl>
@@ -157,6 +158,7 @@ function ProfileForm({ setDialog, onSubmit, initialData }: ProfileFormProps) {
               <FormItem className="w-full">
                 <FormControl>
                   <TransactionTypeSelector
+                    initialType={initialData?.type}
                     onTypeSelect={(type) => field.onChange(type)} // Ensure it updates the form state
                   />
                 </FormControl>

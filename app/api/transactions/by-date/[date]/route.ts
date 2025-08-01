@@ -50,6 +50,7 @@ export async function GET(req: Request, { params }: { params: { date: string } }
         const transactions = await Transaction.find({
             date: { $gte: startOfDayUTC, $lte: endOfDayUTC }
         })
+        .sort({createdAt: -1})
             .populate("category", "name")
             .lean();
 

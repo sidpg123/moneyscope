@@ -17,16 +17,21 @@ import { addCategory, fetchCategories } from "@/actions/FetchAndAddCategories";
 import { useRecoilState } from "recoil";
 import { categoriesAtom } from "@/state/RecoilState";
 
+interface categorySelector {
+  onCategorySelect: (category: string) => void,
+  initialCategory?: string,
+}
 
-export default function CategorySelector({ onCategorySelect }: { onCategorySelect: (category: string) => void }) {
+export default function CategorySelector({ onCategorySelect, initialCategory }: categorySelector) {
   const [categories, setCategories] = useRecoilState(categoriesAtom);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [newCategory, setNewCategory] = useState("");
-
+  
   useEffect(() => {
     async function loadCategories() {
+      setSelectedCategory(initialCategory as string);
       setLoading(true);
       try {
         const fetchedCategories = await fetchCategories();
@@ -74,13 +79,8 @@ export default function CategorySelector({ onCategorySelect }: { onCategorySelec
       <PopoverContent className="w-[300px] p-2">
         <Command>
           <CommandInput placeholder="Search or add category..." />
-          {loading ? ( // ✅ Show loading row when loading
-            // <TableRow>
-            //   <TableCell colSpan={columns.length} className="h-24 text-center">
-            //     <Loader2 className="w-6 h-6 animate-spin mx-auto text-gray-500" />
+          {loading ? ( 
                 <span className="my-2 px-3">Loading...</span>
-            //   </TableCell>
-            // </TableRow>
           ) : (
             <CommandList>
               {categories.map((category) => (
@@ -100,6 +100,7 @@ export default function CategorySelector({ onCategorySelect }: { onCategorySelec
                   onChange={(e) => setNewCategory(e.target.value)}
                   placeholder="New category name"
                   className="w-full"
+                  autoFocus= {false}
                 />
                 <Button onClick={handleAddCategory} size="icon" variant="ghost">
                   <Plus />

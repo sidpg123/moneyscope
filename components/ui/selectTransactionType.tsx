@@ -1,3 +1,4 @@
+"use client"
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -10,14 +11,20 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Check } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
+interface transactionTypeSelector {
+  onTypeSelect: (type: string) => void,
+  initialType?: string
+}
 
-export default function TransactionTypeSelector({ onTypeSelect }: { onTypeSelect: (type: string) => void }) {
+export default function TransactionTypeSelector({ onTypeSelect, initialType }: transactionTypeSelector) {
   const [open, setOpen] = useState(false);
   const [selectedType, setSelectedType] = useState<string | null>(null);
 
-
+  useEffect(() => {
+    setSelectedType(initialType as string);
+  }, [selectedType])
   const handleSelectType = (type: string) => {
     setSelectedType(type);
     onTypeSelect(type);
